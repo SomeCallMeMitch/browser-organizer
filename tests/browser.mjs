@@ -73,7 +73,8 @@ try {
   await page.getByText('Synthetic Research',{exact:true}).waitFor();
   await page.getByRole('button',{name:'History',exact:false}).first().click();
   await page.getByLabel('Search titles and URLs').fill('research one');
-  await page.getByRole('cell',{name:'https://example.test/research?q=one',exact:false}).waitFor();
+  await until(()=>page.locator('tbody tr').count(),n=>n===1,'filtered history UI');
+  await page.locator('tbody a[href="https://example.test/research?q=one"]').waitFor();
   await page.screenshot({path:path.join(root,'history.png'),fullPage:true});
   // A browser restart terminates the worker and reopens the same disposable profile.
   const profilePath=profiles.get(context); await context.close();
