@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Browser Organizer",
+  "version": "0.1.0",
+  "description": "A private, local history archive with search, projects and tags.",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "alarms",
+    "unlimitedStorage"
+  ],
+  "optional_permissions": [
+    "history"
+  ],
+  "background": {
+    "service_worker": "worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Open Browser Organizer"
+  },
+  "incognito": "not_allowed",
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+  },
+  "options_ui": {
+    "page": "dashboard.html",
+    "open_in_tab": true
+  }
+}
