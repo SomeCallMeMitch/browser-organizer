@@ -34,3 +34,16 @@ GitHub Actions runs check and browser integration, uploading dist and synthetic 
 ## Not implemented / not validated yet
 
 Backup validation/merge/replace/round trips, assignment rules, workspace snapshots, mutation safety/partial results, group/window restore, automated accessibility audits, very large native-profile performance, store packaging/release. These belong to later milestones; there is no Chrome Web Store release.
+
+## Recorded result — 2026-10-21
+
+[Passing CI run 39675640647](https://github.com/SomeCallMeMitch/browser-organizer/actions/runs/39675640647), code commit [9bbe7c9](https://github.com/SomeCallMeMitch/browser-organizer/commit/9bbe7c965fb8ebb171d648be36807ace40dd94dc):
+
+- All 11 Node tests passed, including two 10,021-URL import/reimport cases and crowded timestamp expansion, transaction failures/checkpoint recovery, gap reporting, assignment/deletion/filter behavior and simulated worker restart/revocation/alarm preservation.
+- Build, manifest, packaged asset and CSP-source checks passed; clean install/audit reported zero vulnerabilities.
+- Native Chromium 156 passed production-manifest startup, consent gate, onboarding/CSP and existing-dashboard focus. A separate permission-elevated synthetic fixture passed real history import/reimport, capture, independent Chrome-deletion retention, assignments/search UI, browser/worker restart persistence and Forget.
+- Onboarding and filtered history screenshots were visually inspected. No clipping or layout defects were observed. All five local dist files matched the passing CI artifact byte for byte. ZIP contents/integrity were checked; profiles and node_modules are excluded.
+
+This does not claim a real native optional permission prompt was accepted, a permission was revoked in Chrome settings, or a worker was forcibly terminated during an unfinished import. Those remain explicit manual checks. Chrome 120 compatibility, large native-profile performance, narrow-screen/keyboard/screen-reader acceptance and later milestones remain unverified.
+
+Earlier failed runs exposed test-harness socket path length, unexpected internal Chrome history records and a non-unique UI selector. Those harness issues were corrected before the passing run. The initial emulator heap failure was corrected by staging import pages once and avoiding unchanged record rewrites; high-volume repeats now pass.

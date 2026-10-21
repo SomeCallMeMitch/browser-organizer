@@ -28,3 +28,10 @@
 - With the temp-path fix, native production-manifest startup/onboarding/consent gate/options focus/CSP smoke passed in CI run 39674956095. Inspected the onboarding screenshot; layout was readable with no clipping. The history fixture imported data, but an assertion assumed an otherwise empty Chrome history. Scoped fixture assertions to the synthetic example.test domain so internal Chrome records cannot skew totals; rerun pending.
 
 - CI run 39675353780 passed native import/reimport, continuous capture, independent deletion retention and assignment assertions. UI search validation then hit an ambiguous test locator (checkbox cell and page cell shared the URL). Scoped the selector to the result link and added a one-visible-row assertion before taking the history screenshot. Restart/remaining native assertions are next.
+
+### Verified milestone-1 handoff
+
+- [CI run 39675640647](https://github.com/SomeCallMeMitch/browser-organizer/actions/runs/39675640647) passed all 11 Node tests, clean install/build/manifest/CSP checks and the full native Chrome fixture at code commit 9bbe7c9. Native checks cover import/reimport, capture, Chrome-deletion retention, assignment/filter UI, browser/worker restart persistence and Forget. Full dependency audit: zero vulnerabilities.
+- Visually inspected onboarding and history screenshots. Compared every local dist file to the passing CI artifact; all five matched byte for byte. Checked unpacked/source ZIP contents and integrity, documentation links, diff and secret/private-data exclusions.
+- Updated STATUS/ROADMAP/VALIDATION to distinguish tested behavior from manual permission/revocation/forced-worker checks and unreleased milestones. PR #1 remains open and unmerged. No installation or real-user browsing access occurred.
+- Next: manual acceptance before regular use; milestone 2 provides versioned portable backups and manual workspace snapshots before any browser mutation features.
