@@ -43,7 +43,9 @@ function listenHistory() {
 listenHistory(); // Register synchronously at module evaluation for worker wake-up.
 chrome.permissions.onAdded.addListener(() => { listenHistory(); serial(tick).catch(noteFailure); });
 chrome.permissions.onRemoved.addListener(p => { if (p.permissions?.includes('history')) serial(() => db.changeState({permissionLostAt: Date.now()})).catch(noteFailure); });
-const ensureAlarm = () => chrome.alarms.create('archive-maintenance', {periodInMinutes: 0.5});
+const ensureAlarm = async () => {
+  if (!await chrome.alarms.get('archive-maintenance')) await chrome.alarms.create('archive-maintenance', {periodInMinutes: 0.5});
+};
 chrome.runtime.onInstalled.addListener(() => { ensureAlarm().catch(noteFailure); });
 chrome.runtime.onStartup.addListener(() => { ensureAlarm().catch(noteFailure); serial(async () => {
   if ((await db.getState()).consent) await db.changeState({lastBrowserStartup: Date.now()});
@@ -88,5 +90,5 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   serial(() => handle(message)).then(data => respond({ok: true, data}), error => respond({ok: false, error: messageOf(error)}));
   return true;
 });
-// Alarms can disappear across browser restarts. Recreate on every worker evaluation.
+// Alarms can disappear across browser restarts. Check on every worker evaluation.
 ensureAlarm().catch(noteFailure);

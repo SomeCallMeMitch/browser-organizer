@@ -5,7 +5,8 @@ function event() {const listeners=[]; return {listeners,addListener:f=>listeners
 function fakeChrome(data, permitted = false) {
   const api = {
     runtime:{id:'synthetic-extension',onInstalled:event(),onStartup:event(),onMessage:event(),openOptionsPage:async()=>{}},
-    action:{onClicked:event()},alarms:{onAlarm:event(),create:async()=>{}},
+    action:{onClicked:event()},alarms:{onAlarm:event(),get:async()=>api.alarm,create:async(name,info)=>{api.alarm={name,...info};api.alarmCreates++;}},
+    alarmCreates:0,
     permissions:{onAdded:event(),onRemoved:event(),contains:async()=>api.permitted},
     history:{onVisited:event(),onVisitRemoved:event(),search:async()=>[...data.values()].map(x=>x.item),getVisits:async({url})=>data.get(url)?.visits||[]},
     permitted
@@ -21,6 +22,11 @@ test('worker listeners, consent gating, continuous capture, revocation queue, re
   const data=new Map([[a.url,{item:a,visits:[{visitId:'v1',visitTime:100,isLocal:true}]}]]);
   let api=globalThis.chrome=fakeChrome(data);
   await import(`../src/worker.js?test=${crypto.randomUUID()}`);
+  await send(api,'status');
+  assert.equal(api.alarmCreates,1);
+  api.runtime.onInstalled.emit();
+  await send(api,'status');
+  assert.equal(api.alarmCreates,1,'existing alarms are not rescheduled on routine initialization');
   assert.equal(api.history.onVisited.listeners.length,1); // registration at evaluation, not after an async read
   api.history.onVisited.emit(a);
   assert.equal((await send(api,'status')).stats.urls,0);

@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import {cp,mkdir,mkdtemp,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve('artifacts/browser-tests'); await mkdir(root,{recursive:true});
-process.env.TMPDIR ||= root;
+// Keep the OS temp directory short: Unix domain sockets have a ~108-byte path limit.
+// Set TMPDIR explicitly to a short writable path only in restricted local runtimes.
 const profiles = new WeakMap();
 const launch = async (extension, existingProfile) => {
   const profile=existingProfile || await mkdtemp(path.join(root,'profile-'));
