@@ -101,7 +101,7 @@ export class ArchiveDB {
         }
       }
       if (checkpoint) { const {page, ...position} = checkpoint; s.meta.put({...position, hasPage: Array.isArray(page)}, 'import'); }
-      return {archived: stored.length > 0, unavailable: !rawVisits?.length};
+      return {archived: stored.length > 0, unavailable: !rawVisits?.length || rawVisits.some(v => typeof v?.visitId !== 'string' || !Number.isFinite(v?.visitTime))};
     });
   }
   job() { return this.tx(['meta'], 'readonly', async s => {

@@ -37,7 +37,8 @@ export class HistoryImporter {
       const item = job.page[job.offset];
       if (!item?.url) throw new Error('A history item is missing its URL. Import stopped rather than skipping it.');
       const visits = await this.browser.getVisits(item.url);
-      const next = {...job, offset: job.offset + 1, processed: job.processed + 1, unavailable: job.unavailable + (visits?.length ? 0 : 1)};
+      const missingDetails = !visits?.length || visits.some(v => typeof v?.visitId !== 'string' || !Number.isFinite(v?.visitTime));
+      const next = {...job, offset: job.offset + 1, processed: job.processed + 1, unavailable: job.unavailable + (missingDetails ? 1 : 0)};
       // The visit writes and position advance commit in one transaction.
       await this.db.ingest(item, visits, next); job = next;
     }

@@ -10,6 +10,8 @@ Consulted 2026-10-21. These are primary sources; the implementation's behavior a
 - [CSP](https://developer.chrome.com/docs/extensions/reference/manifest/content-security-policy): bundle scripts locally; no eval/remote scripts. Our connect-src is none and no content scripts are installed.
 - [Full-page options](https://developer.chrome.com/docs/extensions/develop/ui/options-page): `options_ui.open_in_tab` and `runtime.openOptionsPage` provide the dashboard route without requesting the tabs permission. Repeated toolbar activation asks Chrome to focus that options page.
 
+- [Playwright Chrome extensions](https://playwright.dev/docs/chrome-extensions): use a persistent disposable profile and the chromium channel for headless extension tests. Never attach to a personal profile.
+
 ## Import choices and uncertainty
 
 Chrome exposes no search cursor or total result count. We do not treat a HistoryItem's lastVisitTime as a pagination cursor: URL records can aggregate visits. Saturated search intervals are bisected with overlapping boundaries; once an interval is <=1 millisecond, maxResults doubles until a non-saturated page is returned. The only maximum is the API's signed integer capacity, at which point the import explicitly errors rather than claiming completion. Stable URL/visit-ID keys absorb overlap and repeated scans.

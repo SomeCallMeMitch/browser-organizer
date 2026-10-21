@@ -97,3 +97,9 @@ test('unsupported schema version is rejected without resetting private data', as
   const future=await new Promise((res,rej)=>{const r=indexedDB.open(db.name,2);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}); future.close();
   await assert.rejects(db.open(),{name:'VersionError'});
 });
+
+test('missing optional visit timestamps are reported as a coverage gap', async () => {
+  const db=dbFor(); const browser={search:async()=>[item()],getVisits:async()=>[{visitId:'missing-time'}]};
+  await db.setJob(newImport(1000)); const done=await drain(new HistoryImporter(db,browser));
+  assert.equal(done.unavailable,1); assert.equal((await db.stats()).visits,0); await db.close();
+});

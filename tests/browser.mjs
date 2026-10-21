@@ -8,7 +8,7 @@ process.env.TMPDIR ||= root;
 const profiles = new WeakMap();
 const launch = async (extension, existingProfile) => {
   const profile=existingProfile || await mkdtemp(path.join(root,'profile-'));
-  const context = await chromium.launchPersistentContext(profile,{executablePath:process.env.CHROMIUM_EXECUTABLE || chromium.executablePath(),headless:true,
+  const context = await chromium.launchPersistentContext(profile,{channel: 'chromium', ...(process.env.CHROMIUM_EXECUTABLE ? {executablePath: process.env.CHROMIUM_EXECUTABLE} : {}), headless:true,
     ignoreDefaultArgs:['--disable-extensions'],args:[`--disable-extensions-except=${extension}`,`--load-extension=${extension}`,'--no-sandbox','--disable-dev-shm-usage']});
   profiles.set(context,profile); return context;
 };

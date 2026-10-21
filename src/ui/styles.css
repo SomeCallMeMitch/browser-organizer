@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@source "./*.jsx";
 @layer base {
   body { @apply bg-[#f6f7fa] text-[#22283e] text-sm antialiased; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
   button,a,input,select { @apply outline-offset-4; }
@@ -47,7 +46,7 @@
   .text-button { @apply text-xs font-medium text-violet-700 px-2 py-1 rounded hover:underline; }
   .card { @apply bg-white rounded-xl border border-slate-200/80 shadow-sm; }
   .stats-grid { @apply grid grid-cols-4 gap-4 mb-6; }
-  .stat { @apply card p-5; }
+  .stat { @apply bg-white rounded-xl border border-slate-200/80 shadow-sm p-5; }
   .stat>span { @apply text-[9px] tracking-widest text-slate-500 font-semibold; }
   .stat>strong { @apply block text-[26px] font-semibold mt-2 tracking-tight; }
   .stat:last-child>strong { @apply text-lg mt-4 mb-1; }
