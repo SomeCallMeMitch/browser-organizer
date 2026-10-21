@@ -1,10 +1,10 @@
 # Roadmap
 
-All implementation milestones are **proposed / not started**. Full acceptance criteria are in [BUILD_PROMPT.md](BUILD_PROMPT.md).
+Full requirements are in [BUILD_PROMPT](BUILD_PROMPT.md). “Implemented” does not mean installed, released, or manually accepted.
 
-1. **Foundation and history:** Loadable Manifest V3 extension; durable schema; permission onboarding; complete available-history import with progress and repeat-safe capture; search, date/domain/project/tag filters; project/tag editing. Verify pagination, counts, interruption and worker restarts.
-2. **Backups:** Manual workspace snapshots and versioned, validated JSON export/import with merge/replace previews and data integrity checks. Verify round trips and invalid imports.
-3. **Tabs and recovery:** Live tab/window/group inventory; operation previews; durable pre-operation snapshots; grouping and project-window consolidation; additive workspace restore. Verify pinned tabs, order, concurrent changes, partial failure and snapshot failure.
-4. **Release readiness:** Performance/accessibility checks, packaged build, install/backup instructions, disposable-profile smoke tests and documented limitations. No store publication without a request.
+1. **Foundation and history — implemented; final validation in progress.** MV3, local schema, optional permission onboarding, resumable available-history import, continuous capture, metadata search/filter/sort/pagination, manual projects/tags and explicit forgetting. Post-fix high-volume tests/CI and native optional prompt/manual worker checks remain to be recorded in STATUS.
+2. **Backups — next / not started.** Manual workspace snapshots and versioned JSON export/import with type/size/scheme validation, merge/replace preview, transaction integrity and tested recovery round trips. Before calling this complete, test malformed/future backups and conflicting IDs. Add assignment-rule previews/explanations and additive manual precedence after backup safety is established.
+3. **Tabs and recovery — not started.** Live normal-profile tabs/windows/groups, duplicate candidates without automatic closure, concrete operation previews, durable pre-operation snapshots that block mutations on failure, grouping/consolidation and additive restore. Test pins/order/groups, disappearing tabs, concurrency and honest partial results. Choose/disclose bounded automatic snapshot retention while preserving manual workspaces.
+4. **Release readiness — not started (build/install instructions added early).** Native performance/accessibility checks, packaging, recovery documentation and full disposable-profile acceptance. Do not publish or merge without authorization. No store release exists.
 
-Later: optional AI, semantic/content search, expanded archive analytics, CSV export if not already implemented. No mandatory external service.
+Later: optional AI, semantic/content search, archive analytics, formula-safe CSV export. No mandatory paid service or REA dependency.

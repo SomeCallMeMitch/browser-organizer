@@ -7,3 +7,12 @@
 - Captured local-only core behavior, history limits/import integrity, privacy, recoverable browser operations, backup validation and phased acceptance criteria. Kept REA optional.
 - Validation: documentation-only review for internal link targets, phase/status consistency and private-data exclusion; final repository readback required before completion. No extension was built, installed or runtime-tested.
 - Next: start milestone 1 using docs/BUILD_PROMPT.md on a task branch.
+
+## 2026-10-21 — Milestone 1 implementation checkpoint
+
+- Verified canonical owner/remote, clean main at 7191c97, latest branch state and no open issues/PRs. Read all required project docs; created feat/local-history-foundation.
+- Verified current official Chrome history, optional permission, lifecycle, alarms, storage, options-page and CSP references. Implemented MV3/React/Tailwind/lucide, native adapter, IndexedDB schema and service-worker operation queue. No Base44 service, REA or other runtime libraries added.
+- Added durable interval-subdivision import, crowded-timestamp expansion, separate visit counting, restart checkpoints, queued future capture, privacy/retention onboarding and explicit deletion exclusions. Added search/filters/sorts/pagination, visit details and manual multi-project/tag organization.
+- Added pinned dependencies/lockfile, reproducible build/package scripts, Node transaction/domain/worker tests, disposable Chromium integration script, CI workflow and install/manual acceptance documentation. No private data or real browser/profile was used.
+- Validation so far: transaction/dedup/assignment/deletion/filter tests and simulated worker lifecycle checks passed; build/manifest/assets/CSP-source checks passed; production npm audit reported zero vulnerabilities. Initial >10,000-URL repeat test exhausted emulator heap; reduced redundant writes and separated staged pages from per-URL checkpoints. Post-fix full suite passed all 10 tests in 19.2 seconds, including both 10,021-URL collision/reimport cases. Local Chromium startup exited SIGTRAP, so no native browser pass is claimed. CI browser results and optional prompt/manual acceptance remain pending. Direct git push had no HTTPS credentials; publication uses the connected GitHub API.
+- Next: finish validation and PR; milestone 2 adds portable backups and manual snapshots before any tab mutations. See STATUS for the live handoff.
