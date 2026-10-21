@@ -18,6 +18,8 @@ const open = async context => { const worker=await workerFor(context); const id=
 const call = (page,type,payload) => page.evaluate(async ({type,payload}) => {
   const result=await chrome.runtime.sendMessage({type,payload}); if(!result?.ok) throw new Error(result?.error || 'Worker response missing'); return result.data;
 },{type,payload});
+const syntheticRows = page => call(page,'query',{domain:'example.test'});
+const syntheticVisitCount = async page => (await syntheticRows(page)).items.reduce((sum,row)=>sum+row.visitCount,0);
 const until = async (action, predicate, label) => {
   const end=Date.now()+20000;
   while(Date.now()<end){const value=await action();if(predicate(value))return value;await new Promise(r=>setTimeout(r,100));}
@@ -53,20 +55,20 @@ try {
   });
   await page.getByRole('checkbox',{name:/I understand/}).check();
   await page.getByRole('button',{name:'Allow history & start import'}).click();
-  const imported=await until(()=>call(page,'status'),s=>s.job?.status==='complete','initial available history import');
-  assert.equal(imported.stats.urls,2); assert.equal(imported.stats.visits,2);
+  await until(()=>call(page,'status'),s=>s.job?.status==='complete','initial available history import');
+  assert.equal((await syntheticRows(page)).total,2); assert.equal(await syntheticVisitCount(page),2);
   await call(page,'import'); await until(()=>call(page,'status'),s=>s.job?.status==='complete','repeat import');
-  assert.equal((await call(page,'status')).stats.visits,2);
+  assert.equal(await syntheticVisitCount(page),2);
   await call(page,'label:save',{kind:'projects',name:'Synthetic Research'});
   await call(page,'label:save',{kind:'tags',name:'Synthetic Review'});
   const labels=(await call(page,'status')).stats;
   await call(page,'assign',{urls:['https://example.test/research?q=one'],kind:'projects',id:labels.projects[0].id});
   assert.equal((await call(page,'query',{text:'example research',project:labels.projects[0].id})).total,1);
   await worker.evaluate(()=>chrome.history.addUrl({url:'https://example.test/future'}));
-  await until(()=>call(page,'status'),s=>s.stats.urls===3,'onVisited continuous capture');
+  await until(()=>syntheticRows(page),s=>s.total===3,'onVisited continuous capture');
   await worker.evaluate(()=>chrome.history.deleteAll());
   await until(()=>call(page,'status'),s=>s.state.browserDeletion?.allHistory,'browser deletion event');
-  assert.equal((await call(page,'status')).stats.urls,3,'independent archive retained');
+  assert.equal((await syntheticRows(page)).total,3,'independent archive retained');
   await page.getByRole('button',{name:'Projects & tags'}).click();
   await page.getByText('Synthetic Research',{exact:true}).waitFor();
   await page.getByRole('button',{name:'History',exact:false}).first().click();
@@ -76,9 +78,9 @@ try {
   // A browser restart terminates the worker and reopens the same disposable profile.
   const profilePath=profiles.get(context); await context.close();
   context=await launch(fixture,profilePath); ({page,worker}=await open(context)); track(page);
-  assert.equal((await call(page,'status')).stats.urls,3);
+  assert.equal((await syntheticRows(page)).total,3);
   await call(page,'forget',{urls:['https://example.test/research?q=one'],confirm:'FORGET'});
-  assert.equal((await call(page,'status')).stats.urls,2);
+  assert.equal((await syntheticRows(page)).total,2);
   console.log('PASS elevated synthetic fixture: real Chrome history import/reimport, capture, browser deletion retention, assignments, search UI, browser/worker restart persistence, forget');
 } finally {await context.close();}
 assert.deepEqual(errors,[],'No uncaught UI errors or CSP violations');
